@@ -89,10 +89,10 @@ if st.session_state.scanner_data is not None:
     st.subheader("Strategy Signal Tables")
     c1, c2 = st.columns(2)
     with c1:
-        st.success("📈 Bullish Gaps")
+        st.success("📈 Potential Buy")
         ev_buy = st.dataframe(buys, use_container_width=True, hide_index=True, on_select="rerun", selection_mode="single-row")
     with c2:
-        st.error("📉 Bearish Gaps")
+        st.error("📉 Potential Sell")
         ev_sell = st.dataframe(sells, use_container_width=True, hide_index=True, on_select="rerun", selection_mode="single-row")
 
     # Selection logic
@@ -111,19 +111,14 @@ if st.session_state.scanner_data is not None:
         t_obj = yf.Ticker(selected_ticker)
         hist = t_obj.history(period="60d")
         info = t_obj.info
-
-        col_a, col_b = st.columns([1, 2])
-        with col_a:
-            st.subheader("Company Profile")
-            st.metric("Market Cap", f"${info.get('marketCap', 0):,}")
-            st.write(f"**Sector:** {info.get('sector', 'N/A')}")
-            st.write(info.get('longBusinessSummary', "Summary not available."))
-        
-        with col_b:
-            st.subheader("30-Day Technical Chart")
-            fig = go.Figure(data=[go.Candlestick(x=hist.index, open=hist['Open'], high=hist['High'], low=hist['Low'], close=hist['Close'])])
-            fig.update_layout(template="plotly_dark", height=400, margin=dict(l=0,r=0,b=0,t=0), xaxis_rangeslider_visible=False)
-            st.plotly_chart(fig, use_container_width=True)
+        st.subheader("Company Profile")
+        st.metric("Market Cap", f"${info.get('marketCap', 0):,}")
+        st.write(f"**Sector:** {info.get('sector', 'N/A')}")
+        st.write(info.get('longBusinessSummary', "Summary not available."))
+        st.subheader("30-Day Technical Chart")
+        fig = go.Figure(data=[go.Candlestick(x=hist.index, open=hist['Open'], high=hist['High'], low=hist['Low'], close=hist['Close'])])
+        fig.update_layout(template="plotly_dark", height=400, margin=dict(l=0,r=0,b=0,t=0), xaxis_rangeslider_visible=False)
+        st.plotly_chart(fig, use_container_width=True)
 
         # --- SMART BACKTESTER ---
         st.subheader("Historical Trades (Last 30 Days)")
